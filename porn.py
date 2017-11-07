@@ -1,23 +1,49 @@
 import praw
 import random
 from cloudbot import hook
+from datetime import datetime
 
 USER_AGENT = "Image fetcher for Snoonet:#Romania by /u/programatorulupeste"
 domains = ['imgur.com', 'gfycat.com', 'redditmedia.com']
+
+class cache_elem:
+    last_fetch = 0
+    links = []
+
+caches = {}
+
+def refresh_cache(r, el):
+    subreddit = r.subreddit(el)
+    caches[el].links.clear()
+    for submission in subreddit.top("month"):
+        if not submission.is_self:
+            for domain in domains:
+                if domain in submission.url:
+                    caches[el].links.append(submission)
+                    break
+    caches[el].last_fetch = datetime.utcnow()
 
 def get_links_from_subs(sub):
     data = []
     r = praw.Reddit("irc_bot", user_agent=USER_AGENT)
 
+    now = datetime.utcnow()
+    
     for el in sub:
-        subreddit = r.subreddit(el)
-
-        for submission in subreddit.top("month"):
-            if not submission.is_self:
-                for domain in domains:
-                    if domain in submission.url:
-                        data.append(submission)
-                        break
+        if el in caches:
+            print("Hot cache for " + el)
+            el_cache = caches[el]
+            # Cache older than 2 hours?
+            if (now - el_cache.last_fetch).total_seconds() > 7200:
+                refresh_cache(r, el)
+        
+            data.extend(el_cache.links)
+        else:
+            print("Cold cache for " + el)
+            caches[el] = cache_elem()
+            refresh_cache(r, el)
+            data.extend(caches[el].links)
+    
     return data
 
 @hook.command()
