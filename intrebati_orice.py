@@ -52,9 +52,12 @@ def checker(bot):
             
             for x in submission:
                 if x.stickied == True and "/r/Romania Orice" in x.title:
+                    #print("found it", LAST_CHECK)
 
                     for c in reversed(x.comments):
                         if hasattr(c, 'created_utc') and  c.created_utc > LAST_CHECK:
+                            #print(c.body)
+                            #print(c.created_utc, LAST_CHECK)
                             LAST_CHECK = c.created_utc
                             
                             msg = list(wrap_message(c))
