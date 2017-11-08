@@ -7,12 +7,16 @@ USER_AGENT = "Image fetcher for Snoonet:#Romania by /u/programatorulupeste"
 domains = ['imgur.com', 'gfycat.com', 'redditmedia.com']
 
 class cache_elem:
-    last_fetch = 0
-    links = []
+    last_fetch = None
+    links = None
+    def __init__(self):
+        self.last_fetch = 0
+        self.links = []
 
 caches = {}
 
 def refresh_cache(r, el):
+    print("Refreshing cache for " + el)
     subreddit = r.subreddit(el)
     caches[el].links.clear()
     for submission in subreddit.top("month"):
@@ -31,7 +35,7 @@ def get_links_from_subs(sub):
     
     for el in sub:
         if el in caches:
-            print("Hot cache for " + el)
+            print("Found cache for " + el)
             el_cache = caches[el]
             # Cache older than 2 hours?
             if (now - el_cache.last_fetch).total_seconds() > 7200:
@@ -43,7 +47,7 @@ def get_links_from_subs(sub):
             caches[el] = cache_elem()
             refresh_cache(r, el)
             data.extend(caches[el].links)
-    
+    print(len(data)) 
     return data
 
 @hook.command()
