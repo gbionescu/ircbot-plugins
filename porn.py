@@ -47,7 +47,6 @@ def get_links_from_subs(sub):
             caches[el] = cache_elem()
             refresh_cache(r, el)
             data.extend(caches[el].links)
-    print(len(data)) 
     return data
 
 @hook.command()
@@ -119,5 +118,29 @@ def amateur(message, text, nick):
 @hook.command()
 def traps(message, text, nick):
     data = get_links_from_subs(['Tgirls', 'traps', 'gonewildtrans', 'tgifs'])
+
+    return random.choice(data).url + " NSFW!"
+
+@hook.command()
+def aww():
+    data = get_links_from_subs(['aww'])
+
+    return random.choice(data).url + " aww..."
+
+@hook.command()
+def pisi():
+    data = get_links_from_subs(['cats'])
+
+    return random.choice(data).url + " aww..."
+
+@hook.command()
+def capre():
+    data = get_links_from_subs(['doggy'])
+
+    return random.choice(data).url + " NSFW!"
+
+@hook.command()
+def lesbiene():
+    data = get_links_from_subs(['dykesgonewild', 'dyke'])
 
     return random.choice(data).url + " NSFW!"
