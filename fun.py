@@ -3,8 +3,20 @@ import markovify
 import os
 import random
 
+TEXTS_REL_PATH = "plugins/texts/"
+
 MAX_OVERLAP_RATIO = 0.5
 MAX_OVERLAP_TOTAL = 10
+
+@hook.command
+def dance(message, text, nick):
+    dance = [
+            "└@(･◡･)@┐",
+            "〈( ^.^)ノ",
+            "ヽ(ﾟｰﾟ*ヽ)",
+            "ヾ(´〇｀)ﾉ",
+            "ヽ(´▽｀)ノ",]
+    message(text + ": " + random.choice(dance))
 
 @hook.command
 def bitter(message, text, nick):
@@ -34,18 +46,8 @@ def puti(message, text, nick):
         message(nick + ": Puţi!")
 
 @hook.command
-def sugipula(message, text, nick):
-    if text == "plp":
-        message("te iuby plp")
-        return
-    if text != "":
-        message(text.split()[0] + ": sugi pula!")
-    else:
-        message(nick + ": sugi pula!")
-
-@hook.command
 def murmuz():
-    with open("urmuz.txt", "r") as f:
+    with open(TEXTS_REL_PATH + "urmuz.txt", "r") as f:
         content = f.read()
 
         text_model = markovify.Text(content)
@@ -59,7 +61,7 @@ def murmuz():
 
 @hook.command
 def mpuric():
-    with open("puric.txt", "r") as f:
+    with open(TEXTS_REL_PATH + "puric.txt", "r") as f:
         content = f.read()
 
         text_model = markovify.Text(content)
@@ -73,7 +75,7 @@ def mpuric():
 
 @hook.command
 def mcioran():
-    with open("cioran.txt", "r") as f:
+    with open(TEXTS_REL_PATH + "cioran.txt", "r") as f:
         content = f.read()
 
         text_model = markovify.Text(content)
