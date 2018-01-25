@@ -1,5 +1,8 @@
+import os
+import re
 import praw
 import random
+import asyncio
 from cloudbot import hook
 from datetime import datetime
 
@@ -32,7 +35,7 @@ def get_links_from_subs(sub):
     r = praw.Reddit("irc_bot", user_agent=USER_AGENT)
 
     now = datetime.utcnow()
-    
+
     for el in sub:
         if el in caches:
             print("Found cache for " + el)
@@ -40,7 +43,7 @@ def get_links_from_subs(sub):
             # Cache older than 2 hours?
             if (now - el_cache.last_fetch).total_seconds() > 7200:
                 refresh_cache(r, el)
-        
+
             data.extend(el_cache.links)
         else:
             print("Cold cache for " + el)
@@ -49,9 +52,51 @@ def get_links_from_subs(sub):
             data.extend(caches[el].links)
     return data
 
+@asyncio.coroutine
+@hook.on_start()
+def init():
+    data = ""
+    with open(os.path.realpath(__file__)) as f:
+        data = f.read()
+
+    data = data.replace(" ", "")
+    data = data.replace("\n","")
+    data = data.replace("\'","")
+    data = data.replace("\"","")
+
+    start = "get_links_from_subs" + "(["
+    end = "])"
+
+    startpos = 0
+    endpos = 0
+    while True:
+        startpos = data.find(start, startpos)
+        endpos = data.find(end, startpos)
+
+        if startpos == -1:
+            break
+
+        subs = data[startpos + len(start):endpos].split(",")
+        get_links_from_subs(subs)
+
+        startpos += len(start)
+
+@hook.periodic(300, initial_interval=30)
+def refresh_porn():
+    print("Refreshing...")
+    for el in caches:
+        fake_list = [el]
+        get_links_from_subs(fake_list)
+
 @hook.command()
 def roscate(message, text, nick):
     data = get_links_from_subs(['ginger', 'redheads', 'RedheadGifs'])
+
+    return random.choice(data).url + " NSFW!"
+
+@hook.command()
+def tatuate(message, text, nick):
+    data = get_links_from_subs(['altgonewild'])
 
     return random.choice(data).url + " NSFW!"
 
