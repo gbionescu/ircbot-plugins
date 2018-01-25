@@ -58,6 +58,19 @@ def murmuz():
             return "pula"
 
 @hook.command
+def mtutea():
+	with open("Tutea.txt", "r") as f:
+		content = f.read()
+		
+		text_model = markovify.Text(content)
+		try:
+			return("sluțea: " + text_model.make_sentence(tries=1000,
+				max_overlap_total = MAX_OVERLAP_TOTAL,
+			except Exception as e:
+				print(e)
+				return "a murit, mai dă-l in pulă"
+				
+@hook.command
 def mpuric():
     with open("puric.txt", "r") as f:
         content = f.read()
