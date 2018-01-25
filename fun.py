@@ -61,13 +61,14 @@ def murmuz():
 
 @hook.command
 def mtutea():
-	with open("Tutea.txt", "r") as f:
+	with open(TEXTS_REL_PATH + "Tutea.txt", "r") as f:
 		content = f.read()
 		
 		text_model = markovify.Text(content)
 		try:
 			return("sluțea: " + text_model.make_sentence(tries=1000,
 				max_overlap_total = MAX_OVERLAP_TOTAL,
+				max_overlap_ratio=MAX_OVERLAP_RATIO))
 			except Exception as e:
 				print(e)
 				return "a murit, mai dă-l in pulă"
